@@ -40,7 +40,9 @@
       "no-unused-vars": "off",
       "no-unused-expressions": "off",
       "react/jsx-no-duplicate-props": "off",
-      "react/jsx-no-target-blank": "off"
+      "react/jsx-no-target-blank": "off",
+      "no-template-curly-in-string": "off",
+      "react-hooks/exhaustive-deps": "off"
     }
   },
   "browserslist": {
