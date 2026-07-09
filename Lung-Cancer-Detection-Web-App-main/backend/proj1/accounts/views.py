@@ -1,4 +1,4 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -14,7 +14,7 @@ from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate, login
 from knox.views import LoginView as KnoxLoginView
 from rest_framework import permissions
-from accounts.serializers import PatientSerializer
+from accounts.serializers import PatientSerializer, UserSerializer
 from accounts.models import Patientdb
 from django.contrib.auth import logout
 from django.http import JsonResponse
@@ -73,33 +73,38 @@ def get_user_data(request):
             'user_info':{
                 'id':user.id,
                 'username':user.username,
-                'email':user.email
+                'email':user.email,
+                'is_staff':user.is_staff
             },
         })
         
     return Response({'error':'not authenticated'}, status=400)
 
 class PatientView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
     def post(self, request, format=None):
-        serializer = PatientSerializer(data=request.data)
+        serializer = PatientSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response({'msg':'Patient data Uploaded Successfully',
             'status':'success','candidate':serializer.data},
             status = status.HTTP_201_CREATED)
         return Response(serializer.errors)
-    
-    
-    
-    def get(self, request, format=None):
+
+
+@api_view(['GET'])
+def list_patients(request):
+    if request.user.is_authenticated and not request.user.is_staff:
+        candidates = Patientdb.objects.filter(user=request.user)
+    else:
         candidates = Patientdb.objects.all()
-        #serializer = PatientSerializer(candidates, many=True)
-        serializer = PatientSerializer(
-            candidates,
-            many=True,
-            context={'request': request}
-        )
-        return Response({'status':'success','candidates':serializer.data}, status=status.HTTP_200_OK)
+    serializer = PatientSerializer(
+        candidates,
+        many=True,
+        context={'request': request}
+    )
+    return Response({'status':'success','candidates':serializer.data}, status=status.HTTP_200_OK)
     
 
 
@@ -114,12 +119,15 @@ def get_patient_details(request):
     if not name:
         return Response({'error': 'Please provide a name to search for.'}, status=400)
     
-    patients = Patientdb.objects.filter(name__icontains=name)
+    if request.user.is_staff:
+        patients = Patientdb.objects.filter(name__icontains=name)
+    else:
+        patients = Patientdb.objects.filter(name__icontains=name, user=request.user)
 
     if not patients:
         return Response({'error': 'Patient not found.'}, status=404)
 
-    serializer = PatientSerializer(patients, many=True)
+    serializer = PatientSerializer(patients, many=True, context={'request': request})
     return Response(serializer.data)
 
 
@@ -137,7 +145,10 @@ def get_single_patient(request):
 
     try:
 
-        patient = Patientdb.objects.get(id=patient_id)
+        if request.user.is_staff:
+            patient = Patientdb.objects.get(id=patient_id)
+        else:
+            patient = Patientdb.objects.get(id=patient_id, user=request.user)
 
         serializer = PatientSerializer(
             patient,
@@ -189,12 +200,15 @@ def edit_patient_details(request):
     if not id:
         return Response({'error': 'Please provide a name to search for.'}, status=400)
     
-    patients = Patientdb.objects.filter(id=id)
+    if request.user.is_staff:
+        patients = Patientdb.objects.filter(id=id)
+    else:
+        patients = Patientdb.objects.filter(id=id, user=request.user)
 
     if not patients:
         return Response({'error': 'Patient not found.'}, status=404)
 
-    serializer = PatientSerializer(patients, many=True)
+    serializer = PatientSerializer(patients, many=True, context={'request': request})
     return Response(serializer.data)
 
 
@@ -204,7 +218,10 @@ def delete_patient(request, id):
 
     try:
 
-        patient = Patientdb.objects.get(id=id)
+        if request.user.is_staff:
+            patient = Patientdb.objects.get(id=id)
+        else:
+            patient = Patientdb.objects.get(id=id, user=request.user)
 
         patient.delete()
 
@@ -218,3 +235,37 @@ def delete_patient(request, id):
             {'error': 'Patient not found'},
             status=404
         )
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAdminUser])
+def admin_list_users(request):
+    users = User.objects.all().order_by('-date_joined')
+    serializer = UserSerializer(users, many=True)
+    return Response({'users': serializer.data})
+
+
+@api_view(['PUT'])
+@permission_classes([permissions.IsAdminUser])
+def admin_update_user(request, id):
+    try:
+        user = User.objects.get(id=id)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=404)
+
+    serializer = UserSerializer(user, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'user': serializer.data, 'msg': 'User updated successfully'})
+    return Response(serializer.errors, status=400)
+
+
+@api_view(['DELETE'])
+@permission_classes([permissions.IsAdminUser])
+def admin_delete_user(request, id):
+    try:
+        user = User.objects.get(id=id)
+        user.delete()
+        return Response({'msg': 'User deleted successfully'})
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=404)

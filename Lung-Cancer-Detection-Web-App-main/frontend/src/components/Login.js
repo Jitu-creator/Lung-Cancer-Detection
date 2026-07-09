@@ -5,7 +5,7 @@ import React, { useState } from "react";
 
 import axios from "axios";
 
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 
 import { motion } from "framer-motion";
 
@@ -21,6 +21,7 @@ import {
 const Login = () => {
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
 
@@ -60,13 +61,16 @@ const Login = () => {
 
       console.log(response.data);
 
-      localStorage.setItem(
-        "username",
-        response.data.username
-      );
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+      localStorage.setItem("username", response.data.user?.username || "");
+      localStorage.setItem("userId", response.data.user?.id || "");
+      localStorage.setItem("isStaff", response.data.user?.is_staff || "");
+      axios.defaults.headers.common['Authorization'] = `Token ${token}`;
       toast.success("Logged in successfully");
       console.log("User logged in");
-      navigate("/home");
+      const from = location.state?.from || "/home";
+      navigate(from, { replace: true });
 
     } catch (error) {
 

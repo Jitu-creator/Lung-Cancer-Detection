@@ -63,7 +63,7 @@ const Signup = () => {
 
     try {
 
-      await axios.post(
+      const response = await axios.post(
 
         "http://127.0.0.1:8000/api/register/",
 
@@ -79,9 +79,14 @@ const Signup = () => {
 
       );
 
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+      localStorage.setItem("username", response.data.user_info?.username || "");
+      localStorage.setItem("userId", response.data.user_info?.id || "");
+      axios.defaults.headers.common['Authorization'] = `Token ${token}`;
       toast.success("Registration successful");
 
-      navigate("/login");
+      navigate("/home");
 
     } catch (error) {
 

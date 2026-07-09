@@ -79,9 +79,8 @@ WSGI_APPLICATION = 'proj1.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-if os.environ.get('USE_MYSQL') == '1':
-    DATABASES = {
-        'default': {
+DATABASES = {
+    'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.environ.get('MYSQL_DATABASE', 'cancer'),
         'USER': os.environ.get('MYSQL_USER', 'root'),
@@ -89,17 +88,10 @@ if os.environ.get('USE_MYSQL') == '1':
         'HOST': os.environ.get('MYSQL_HOST', 'localhost'),
         'PORT': os.environ.get('MYSQL_PORT', '3306'),
         'OPTIONS': {
-            "init_command":"SET foreign_key_checks = 0;",
-        }
+            "init_command": "SET foreign_key_checks = 0;",
+        },
     }
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
 
 # Password validation
@@ -145,6 +137,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = { 
     'DEFAULT_AUTHENTICATION_CLASSES':('knox.auth.TokenAuthentication',)
+}
+
+REST_KNOX = {
+    'USER_SERIALIZER': 'accounts.serializers.KnoxUserSerializer',
 }
 
 # CORS_ORIGIN_ALLOW_ALL = True

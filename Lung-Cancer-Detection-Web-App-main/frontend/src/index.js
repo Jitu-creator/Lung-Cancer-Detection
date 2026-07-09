@@ -6,6 +6,12 @@ import App from './App';
 import Navbar from './Navbar';
 import Footer from './footer';
 // import 'bootstrap/dist/css/bootstrap.css';
+import axios from 'axios';
+
+const token = localStorage.getItem('token');
+if (token) {
+  axios.defaults.headers.common['Authorization'] = `Token ${token}`;
+}
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

@@ -29,6 +29,9 @@ import Editpatient from './components/Editpatient';
 import PatientDetails from './components/PatientDetails'
 import Patients from './components/Patients'
 import RootGateway from './components/RootGateway';
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
+import AdminDashboard from './components/AdminDashboard';
 
 
 function NavbarLayout() {
@@ -79,25 +82,27 @@ return (
      <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Signup />} />
-        <Route path="/" element={<RootGateway />} />
 
         <Route element={<NavbarLayout />}>
-            
-            {/* <Route path="/" element={<RootGateway />} /> */}
+
+            <Route path="/" element={< Home />} />
             <Route exact path='home' element={< Home />}></Route>
-            <Route exact path='about' element={< About />}></Route>
-            <Route exact path='patient_form' element={< Patient />}></Route>
-            {/* <Route exact path='login' element={<Login />}></Route> */}
-            {/* <Route exact path='register' element={<Signup />}></Route> */}
-            <Route exact path='/doctor_profile' element={<Doctor2 />}></Route>
             <Route exact path='/patientdata' element={<Patientdata />}></Route>
-            <Route exact path='/search' element={<Search />}></Route>
-            <Route exact path='/services' element={<Services/>}></Route>
-            <Route exact path='/editpatient/:id' element={<Editpatient/>}></Route>
 
-            <Route exact path='/patient/:id' element={<PatientDetails/>}></Route>
+            <Route element={<ProtectedRoute />}>
+                <Route exact path='about' element={< About />}></Route>
+                <Route exact path='patient_form' element={< Patient />}></Route>
+                <Route exact path='/doctor_profile' element={<Doctor2 />}></Route>
+                <Route exact path='/search' element={<Search />}></Route>
+                <Route exact path='/services' element={<Services/>}></Route>
+                <Route exact path='/editpatient/:id' element={<Editpatient/>}></Route>
+                <Route exact path='/patient/:id' element={<PatientDetails/>}></Route>
+                <Route exact path='/patients' element={<Patients/>}></Route>
+            </Route>
 
-            <Route exact path='/patients' element={<Patients/>}></Route>
+            <Route element={<AdminRoute />}>
+                <Route exact path='/admin/dashboard' element={<AdminDashboard />}></Route>
+            </Route>
         </Route>
           </Routes>
      </Router>
