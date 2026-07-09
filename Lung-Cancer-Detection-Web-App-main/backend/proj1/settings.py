@@ -12,13 +12,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
-import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Add the project root to sys.path so 'accounts' app is importable on Render
-sys.path.insert(0, str(BASE_DIR))
 
 
 # Quick-start development settings - unsuitable for production
@@ -60,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'proj1.proj1.urls'
+ROOT_URLCONF = 'proj1.urls'
 
 TEMPLATES = [
     {
@@ -78,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'proj1.proj1.wsgi.application'
+WSGI_APPLICATION = 'proj1.wsgi.application'
 
 
 # Database
