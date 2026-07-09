@@ -349,7 +349,7 @@ class Patientdb(models.Model):
                 self.pk
             )
 
-        except Exception:
+        except Exception as exc:
 
             logger.exception(
                 "Classification failed for patient %s",
@@ -359,7 +359,7 @@ class Patientdb(models.Model):
             Patientdb.objects.filter(
                 pk=self.pk
             ).update(
-                classified="Classification failed"
+                classified=f"Classification failed: {exc}"
             )
 
 
