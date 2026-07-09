@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CountUp from "react-countup";
 
+import API_BASE_URL from "../api";
 import axios from "axios";
 
 
@@ -37,7 +38,7 @@ const Patients = () => {
 
  useEffect(() => {
     setLoading(true);
-    axios.get('http://127.0.0.1:8000/api/list/')
+    axios.get(`${API_BASE_URL}/api/list/`)
       .then(response => {
         setPatients(response.data.candidates);
         setLoading(false);

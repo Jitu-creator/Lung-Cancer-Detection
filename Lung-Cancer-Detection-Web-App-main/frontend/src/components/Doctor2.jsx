@@ -5,6 +5,7 @@ import { CCardBody,CCardTitle, CCardText,CButton } from '@coreui/react';
 import './Doctor.css'
 import { useState } from 'react';
 import { useEffect } from 'react';
+import API_BASE_URL from '../api';
 import axios from 'axios';
 import doctor from './doctor456.jpg';
 const Doctor2 = () => {
@@ -15,7 +16,7 @@ const Doctor2 = () => {
     useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await axios.get(`http://127.0.0.1:8000/api/user/?username=${name}`);
+          const response = await axios.get(`${API_BASE_URL}/api/user/?username=${name}`);
           setUserData(response.data);
           console.log(userData)
         }  catch (error) {

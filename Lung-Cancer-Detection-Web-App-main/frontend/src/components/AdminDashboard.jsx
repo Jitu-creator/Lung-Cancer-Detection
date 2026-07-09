@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import API_BASE_URL from "../api";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
@@ -16,7 +17,7 @@ const AdminDashboard = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/admin/users/");
+      const res = await axios.get("${API_BASE_URL}/api/admin/users/");
       setUsers(res.data.users);
     } catch {
       toast.error("Failed to fetch users");
@@ -43,7 +44,7 @@ const AdminDashboard = () => {
 
   const saveEdit = async (id) => {
     try {
-      const res = await axios.put(`http://127.0.0.1:8000/api/admin/users/${id}/`, editForm);
+      const res = await axios.put(`${API_BASE_URL}/api/admin/users/${id}/`, editForm);
       toast.success(res.data.msg);
       setEditingUser(null);
       fetchUsers();
@@ -54,7 +55,7 @@ const AdminDashboard = () => {
 
   const toggleRole = async (user) => {
     try {
-      const res = await axios.put(`http://127.0.0.1:8000/api/admin/users/${user.id}/`, {
+      const res = await axios.put(`${API_BASE_URL}/api/admin/users/${user.id}/`, {
         is_staff: !user.is_staff,
       });
       toast.success(res.data.msg);
@@ -67,7 +68,7 @@ const AdminDashboard = () => {
   const deleteUser = async (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
-      const res = await axios.delete(`http://127.0.0.1:8000/api/admin/users/${id}/delete/`);
+      const res = await axios.delete(`${API_BASE_URL}/api/admin/users/${id}/delete/`);
       toast.success(res.data.msg);
       fetchUsers();
     } catch {

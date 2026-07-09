@@ -13,6 +13,7 @@ import {
 
 } from "react-icons/fa";
 import React, { useEffect, useState, useRef } from 'react'
+import API_BASE_URL from '../api'
 import axios from 'axios'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ImageZoom } from "../image-zoom.tsx";
@@ -29,7 +30,7 @@ const PatientDetails = () => {
   useEffect(() => {
 
     axios
-      .get(`http://127.0.0.1:8000/api/patient_details/?id=${id}`)
+      .get(`${API_BASE_URL}/api/patient_details/?id=${id}`)
 
       .then(response => {
 
@@ -189,7 +190,7 @@ const handleShare = async () => {
 
     await axios.delete(
 
-      `http://127.0.0.1:8000/api/delete_patient/${id}/`
+      `${API_BASE_URL}/api/delete_patient/${id}/`
     )
 
 

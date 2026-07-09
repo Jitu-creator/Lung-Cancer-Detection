@@ -3,6 +3,7 @@
 import toast from "react-hot-toast";
 import React, { useState } from "react";
 
+import API_BASE_URL from "../api";
 import axios from "axios";
 
 import { useNavigate, Link } from "react-router-dom";
@@ -65,7 +66,7 @@ const Signup = () => {
 
       const response = await axios.post(
 
-        "http://127.0.0.1:8000/api/register/",
+        `${API_BASE_URL}/api/register/`,
 
         {
 

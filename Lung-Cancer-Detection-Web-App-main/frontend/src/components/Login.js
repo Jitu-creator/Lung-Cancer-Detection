@@ -3,6 +3,7 @@
 import toast from "react-hot-toast";
 import React, { useState } from "react";
 
+import API_BASE_URL from "../api";
 import axios from "axios";
 
 import { useNavigate, Link, useLocation } from "react-router-dom";
@@ -54,7 +55,7 @@ const Login = () => {
 
       const response = await axios.post(
 
-        "http://127.0.0.1:8000/api/login/",
+        `${API_BASE_URL}/api/login/`,
 
         formData
       );

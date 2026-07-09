@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import API_BASE_URL from '../api';
 import axios from 'axios';
 const Editpatient = () => {
     const param = useParams();
@@ -57,7 +58,7 @@ const Editpatient = () => {
         const fetchData = async () => {
             // http://127.0.0.1:8000/api/edit_patient/?id=18
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/api/edit_patient/?id=${id}`);
+                const response = await axios.get(`${API_BASE_URL}/api/edit_patient/?id=${id}`);
                 setUserData(response.data);
                 // console.log(Userdata)
             } catch (error) {

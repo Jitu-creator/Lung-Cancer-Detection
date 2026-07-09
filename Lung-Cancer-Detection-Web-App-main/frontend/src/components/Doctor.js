@@ -5,6 +5,7 @@ import { CCardBody,CCardTitle, CCardText,CButton } from '@coreui/react';
 import './Doctor.css'
 import { useState } from 'react';
 import { useEffect } from 'react';
+import API_BASE_URL from '../api';
 import axios from 'axios';
 
 // function Udoctor () {
@@ -16,7 +17,7 @@ import axios from 'axios';
 //   useEffect(() => {
 //     // fetch the user data from the server using Axios
 //     const fetchData = async () => {
-//       const response = await axios.get(`http://127.0.0.1:8000/api/user?username=${name}`);
+//       const response = await axios.get(`${API_BASE_URL}/api/user?username=${name}`);
 //       setUserData(response.data);
 //       console.log(userData)
 //     }
@@ -37,7 +38,7 @@ const Doctor =()=>{
 
     useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get(`http://127.0.0.1:8000/api/user?username=${name}`);
+      const response = await axios.get(`${API_BASE_URL}/api/user?username=${name}`);
       setUserData(response.data);
       console.log(userData)
     };
@@ -87,7 +88,7 @@ export default Doctor
 
 //   useEffect(() => {
 //     const fetchData = async () => {
-//       const response = await axios.get(`http://127.0.0.1:8000/api/user?username=${userId}`);
+//       const response = await axios.get(`${API_BASE_URL}/api/user?username=${userId}`);
 //       setUserData(response.data);
 //       console.log(userData)
 //     };
