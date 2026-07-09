@@ -3,9 +3,6 @@ import ReactDOM from 'react-dom/client';
 import './index.scss';
 // import './custom.scss';
 import App from './App';
-import Navbar from './Navbar';
-import Footer from './footer';
-// import 'bootstrap/dist/css/bootstrap.css';
 import axios from 'axios';
 
 const token = localStorage.getItem('token');
@@ -18,8 +15,8 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     {/* <Navbar/> */}
-    <div class='imge imge-content'>
-      <div class='content'>
+    <div className='imge imge-content'>
+      <div className='content'>
        <App />
     </div>
     </div>

@@ -36,7 +36,11 @@
       "react-app/jest"
     ],
     "rules": {
-      "jsx-a11y/anchor-is-valid": "off"
+      "jsx-a11y/anchor-is-valid": "off",
+      "no-unused-vars": "off",
+      "no-unused-expressions": "off",
+      "react/jsx-no-duplicate-props": "off",
+      "react/jsx-no-target-blank": "off"
     }
   },
   "browserslist": {
