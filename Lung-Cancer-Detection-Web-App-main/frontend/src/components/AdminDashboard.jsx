@@ -102,15 +102,15 @@ const AdminDashboard = () => {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="overflow-x-auto">
             <table className="w-full bg-white rounded-2xl overflow-hidden shadow-lg">
               <thead>
-                <tr className="bg-cyan-500 border-b border-gray-200">
-                  <th className="text-left px-6 py-4 text-white font-semibold">ID</th>
-                  <th className="text-left px-6 py-4 text-white font-semibold">Username</th>
-                  <th className="text-left px-6 py-4 text-white font-semibold">Email</th>
-                  <th className="text-left px-6 py-4 text-white font-semibold">Name</th>
-                  <th className="text-left px-6 py-4 text-white font-semibold">Joined</th>
-                  <th className="text-center px-6 py-4 text-white font-semibold">Role</th>
-                  <th className="text-center px-6 py-4 text-white font-semibold">Active</th>
-                  <th className="text-center px-6 py-4 text-white font-semibold">Actions</th>
+                <tr className="bg-cyan-100 border-b border-gray-200">
+                  <th className="text-left px-6 py-4 text-gray-800 font-semibold">ID</th>
+                  <th className="text-left px-6 py-4 text-gray-800 font-semibold">Username</th>
+                  <th className="text-left px-6 py-4 text-gray-800 font-semibold">Email</th>
+                  <th className="text-left px-6 py-4 text-gray-800 font-semibold">Name</th>
+                  <th className="text-left px-6 py-4 text-gray-800 font-semibold">Joined</th>
+                  <th className="text-center px-6 py-4 text-gray-800 font-semibold">Role</th>
+                  <th className="text-center px-6 py-4 text-gray-800 font-semibold">Active</th>
+                  <th className="text-center px-6 py-4 text-gray-800 font-semibold">Actions</th>
                 </tr>
               </thead>
               <tbody>
