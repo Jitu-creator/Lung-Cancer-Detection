@@ -18,7 +18,8 @@ import {
   FaLock,
   FaBrain,
   FaLungsVirus,
-  FaCheckCircle
+  FaCheckCircle,
+  FaIdCard
 
 } from "react-icons/fa";
 
@@ -29,7 +30,8 @@ const Signup = () => {
     username: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
+    first_name: ""
 
   });
 
@@ -74,7 +76,9 @@ const Signup = () => {
 
           email: formData.email,
 
-          password: formData.password
+          password: formData.password,
+
+          first_name: formData.first_name
 
         }
 
@@ -179,6 +183,21 @@ const Signup = () => {
                       onChange={handleChange}
                       className="bg-transparent outline-none text-white w-full placeholder-slate-400"
                       required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-slate-300 text-sm mb-2 block">Full Name</label>
+                  <div className="flex items-center bg-white/10 border border-white/20 rounded-xl px-4 py-3">
+                    <FaIdCard className="text-cyan-400 mr-3" />
+                    <input
+                      type="text"
+                      name="first_name"
+                      placeholder="Enter your name"
+                      value={formData.first_name}
+                      onChange={handleChange}
+                      className="bg-transparent outline-none text-white w-full placeholder-slate-400"
                     />
                   </div>
                 </div>
