@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate
 from .serializers import RegistrationSerializer
 import os
 import logging
+import threading
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
@@ -75,22 +76,26 @@ class RegistrationView(APIView):
             ver.save()
 
             verify_link = f"{settings.FRONTEND_URL}/verify-email?token={ver.token}&user_id={user.id}"
-            try:
-                send_mail(
-                    subject="Verify your email – Lung Cancer Detection",
-                    message=(
-                        f"Hi {user.username},\n\n"
-                        f"Thank you for registering! Please verify your email by clicking the link below:\n\n"
-                        f"{verify_link}\n\n"
-                        f"This link expires after 24 hours.\n\n"
-                        f"Best regards,\nLung Cancer Detection Team"
-                    ),
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[user.email],
-                    fail_silently=False,
-                )
-            except Exception as e:
-                pass
+
+            def send_async():
+                try:
+                    send_mail(
+                        subject="Verify your email – Lung Cancer Detection",
+                        message=(
+                            f"Hi {user.username},\n\n"
+                            f"Thank you for registering! Please verify your email by clicking the link below:\n\n"
+                            f"{verify_link}\n\n"
+                            f"This link expires after 24 hours.\n\n"
+                            f"Best regards,\nLung Cancer Detection Team"
+                        ),
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[user.email],
+                        fail_silently=False,
+                    )
+                except Exception as e:
+                    logger.error(f"Failed to send verification email to {user.email}: {e}")
+
+            threading.Thread(target=send_async, daemon=True).start()
 
             return Response({
                 'msg': 'Registration successful. Please check your email to verify your account.',
@@ -383,25 +388,25 @@ def resend_verification(request):
     ver.save()
 
     verify_link = f"{settings.FRONTEND_URL}/verify-email?token={ver.token}&user_id={user.id}"
-    try:
-        send_mail(
-            subject="Verify your email – Lung Cancer Detection",
-            message=(
-                f"Hi {user.username},\n\n"
-                f"Here is your new verification link:\n\n"
-                f"{verify_link}\n\n"
-                f"Best regards,\nLung Cancer Detection Team"
-            ),
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-            fail_silently=False,
-        )
-    except Exception as e:
-        logger.exception("Email sending failed")
-        return Response({
-            'error': f'Failed to send email: {e}',
-            'hint': 'Check SMTP settings on Railway (EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD). Gmail requires an App Password, not your regular password.'
-        }, status=500)
+
+    def send_async():
+        try:
+            send_mail(
+                subject="Verify your email – Lung Cancer Detection",
+                message=(
+                    f"Hi {user.username},\n\n"
+                    f"Here is your new verification link:\n\n"
+                    f"{verify_link}\n\n"
+                    f"Best regards,\nLung Cancer Detection Team"
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            logger.error(f"Failed to resend verification email to {user.email}: {e}")
+
+    threading.Thread(target=send_async, daemon=True).start()
 
     return Response({'msg': 'Verification email resent. Please check your inbox.'})
 
