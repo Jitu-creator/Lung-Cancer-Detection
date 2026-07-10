@@ -429,16 +429,3 @@ def debug_smtp(request):
         'EMAIL_HOST_PASSWORD_SET': bool(settings.EMAIL_HOST_PASSWORD),
     })
 
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def test_smtp(request):
-    import traceback, socket
-    try:
-        from django.core.mail import get_connection
-        conn = get_connection(timeout=10)
-        conn.open()
-        conn.close()
-        return Response({'msg': 'SMTP connection successful!'})
-    except Exception as e:
-        return Response({'error': str(e)}, status=500)
