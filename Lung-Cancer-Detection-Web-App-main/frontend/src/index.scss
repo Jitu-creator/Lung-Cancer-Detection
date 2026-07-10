@@ -76,17 +76,32 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  width: 100%;
 }
 
 body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  overflow-x: hidden;
   background: #f8fafc;
   font-family: 'Inter', sans-serif;
-  overflow-x: hidden;
+}
+
+#root {
   width: 100%;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 
