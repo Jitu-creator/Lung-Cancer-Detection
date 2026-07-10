@@ -423,3 +423,23 @@ def debug_smtp(request):
         'DEFAULT_FROM_EMAIL': settings.DEFAULT_FROM_EMAIL,
         'EMAIL_HOST_PASSWORD_SET': bool(settings.EMAIL_HOST_PASSWORD),
     })
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def test_smtp(request):
+    import traceback
+    try:
+        send_mail(
+            subject="Test email – Lung Cancer Detection",
+            message="This is a test email to verify SMTP settings.",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[settings.EMAIL_HOST_USER],
+            fail_silently=False,
+        )
+        return Response({'msg': 'Test email sent successfully!'})
+    except Exception as e:
+        return Response({
+            'error': str(e),
+            'traceback': traceback.format_exc()
+        }, status=500)
