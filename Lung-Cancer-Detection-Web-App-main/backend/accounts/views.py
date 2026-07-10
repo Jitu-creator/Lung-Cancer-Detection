@@ -11,6 +11,8 @@ from .serializers import RegistrationSerializer
 import os
 import logging
 import threading
+import json
+import urllib.request
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
@@ -79,19 +81,17 @@ class RegistrationView(APIView):
 
             def send_async():
                 try:
-                    send_mail(
-                        subject="Verify your email – Lung Cancer Detection",
-                        message=(
-                            f"Hi {user.username},\n\n"
-                            f"Thank you for registering! Please verify your email by clicking the link below:\n\n"
-                            f"{verify_link}\n\n"
-                            f"This link expires after 24 hours.\n\n"
-                            f"Best regards,\nLung Cancer Detection Team"
-                        ),
-                        from_email=settings.DEFAULT_FROM_EMAIL,
-                        recipient_list=[user.email],
-                        fail_silently=False,
-                    )
+                    api_key = settings.EMAIL_HOST_PASSWORD
+                    if api_key and settings.EMAIL_HOST == 'smtp.sendgrid.net':
+                        data = json.dumps({
+                            "personalizations": [{"to": [{"email": user.email}], "subject": "Verify your email – Lung Cancer Detection"}],
+                            "from": {"email": settings.DEFAULT_FROM_EMAIL},
+                            "content": [{"type": "text/plain", "value": f"Hi {user.username},\n\nThank you for registering! Please verify your email by clicking the link below:\n\n{verify_link}\n\nBest regards,\nLung Cancer Detection Team"}]
+                        }).encode()
+                        req = urllib.request.Request("https://api.sendgrid.com/v3/mail/send", data=data, headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"})
+                        urllib.request.urlopen(req, timeout=15)
+                    else:
+                        send_mail(subject="Verify your email – Lung Cancer Detection", message=f"Hi {user.username},\n\nThank you for registering! Please verify your email by clicking the link below:\n\n{verify_link}\n\nBest regards,\nLung Cancer Detection Team", from_email=settings.DEFAULT_FROM_EMAIL, recipient_list=[user.email], fail_silently=False)
                 except Exception as e:
                     logger.error(f"Failed to send verification email to {user.email}: {e}")
 
@@ -396,18 +396,17 @@ def resend_verification(request):
 
     def send_async():
         try:
-            send_mail(
-                subject="Verify your email – Lung Cancer Detection",
-                message=(
-                    f"Hi {user.username},\n\n"
-                    f"Here is your new verification link:\n\n"
-                    f"{verify_link}\n\n"
-                    f"Best regards,\nLung Cancer Detection Team"
-                ),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-                fail_silently=False,
-            )
+            api_key = settings.EMAIL_HOST_PASSWORD
+            if api_key and settings.EMAIL_HOST == 'smtp.sendgrid.net':
+                data = json.dumps({
+                    "personalizations": [{"to": [{"email": user.email}], "subject": "Verify your email – Lung Cancer Detection"}],
+                    "from": {"email": settings.DEFAULT_FROM_EMAIL},
+                    "content": [{"type": "text/plain", "value": f"Hi {user.username},\n\nHere is your new verification link:\n\n{verify_link}\n\nBest regards,\nLung Cancer Detection Team"}]
+                }).encode()
+                req = urllib.request.Request("https://api.sendgrid.com/v3/mail/send", data=data, headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"})
+                urllib.request.urlopen(req, timeout=15)
+            else:
+                send_mail(subject="Verify your email – Lung Cancer Detection", message=f"Hi {user.username},\n\nHere is your new verification link:\n\n{verify_link}\n\nBest regards,\nLung Cancer Detection Team", from_email=settings.DEFAULT_FROM_EMAIL, recipient_list=[user.email], fail_silently=False)
         except Exception as e:
             logger.error(f"Failed to resend verification email to {user.email}: {e}")
 
