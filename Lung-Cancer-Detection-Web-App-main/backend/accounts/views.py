@@ -8,6 +8,7 @@ from knox.auth import TokenAuthentication
 from .serializers import LoginSerializer
 from django.contrib.auth import authenticate
 from .serializers import RegistrationSerializer
+import os
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import authenticate, login
@@ -310,11 +311,38 @@ def admin_delete_user(request, id):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+def bootstrap_admin(request):
+    key = request.data.get('key', '')
+    username = request.data.get('username', '')
+
+    expected = os.environ.get('ADMIN_BOOTSTRAP_KEY', '')
+    if not expected:
+        return Response({'error': 'ADMIN_BOOTSTRAP_KEY not set on server.'}, status=500)
+    if key != expected:
+        return Response({'error': 'Invalid bootstrap key.'}, status=403)
+
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found.'}, status=404)
+
+    user.is_active = True
+    user.is_staff = True
+    user.is_superuser = True
+    user.save()
+
+    EmailVerification.objects.filter(user=user).delete()
+
+    return Response({'msg': f'User "{username}" is now an active admin.'})
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
 def verify_email(request):
     token = request.data.get('token')
     user_id = request.data.get('user_id')
 
-    if not token or not user_id:
+    if not token or user_id is None:
         return Response({'error': 'Token and user_id are required.'}, status=400)
 
     try:
