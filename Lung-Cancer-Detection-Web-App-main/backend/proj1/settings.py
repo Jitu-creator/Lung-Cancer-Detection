@@ -168,6 +168,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3004",
     "http://127.0.0.1:8000",
     "https://lung-cancer-detection-blond.vercel.app",
+    "https://lung-cancer-detection-gsy1ja38o-sumtroy4321-4246s-projects.vercel.app",
 ]
 
 if HF_SPACE:
@@ -193,4 +194,20 @@ CORS_ALLOW_METHODS = [
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+# Email verification settings
+EMAIL_BACKEND = os.environ.get(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.smtp.EmailBackend'
+)
+EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@example.com')
+FRONTEND_URL = os.environ.get(
+    'FRONTEND_URL',
+    'https://lung-cancer-detection-gsy1ja38o-sumtroy4321-4246s-projects.vercel.app'
+)
 

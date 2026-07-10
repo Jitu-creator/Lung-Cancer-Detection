@@ -32,6 +32,7 @@ import RootGateway from './components/RootGateway';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import AdminDashboard from './components/AdminDashboard';
+import VerifyEmail from './components/VerifyEmail';
 
 
 function NavbarLayout() {
@@ -82,6 +83,7 @@ return (
      <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Signup />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
 
         <Route element={<NavbarLayout />}>
 

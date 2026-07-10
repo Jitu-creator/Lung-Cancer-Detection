@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.models import AuthToken
 from rest_framework import status
-# from .serializers import RegisterSerializer
 from knox.auth import TokenAuthentication
 from .serializers import LoginSerializer
 from django.contrib.auth import authenticate
@@ -15,10 +14,14 @@ from django.contrib.auth import authenticate, login
 from knox.views import LoginView as KnoxLoginView
 from rest_framework import permissions
 from accounts.serializers import PatientSerializer, UserSerializer
-from accounts.models import Patientdb
+from accounts.models import Patientdb, EmailVerification
 from django.contrib.auth import logout
 from django.http import JsonResponse
 from django.contrib.auth.models import User
+from django.conf import settings
+from django.core.mail import send_mail
+from django.utils import timezone
+from django.utils.crypto import get_random_string
 
 
 
@@ -29,6 +32,16 @@ class LoginAPI(KnoxLoginView):
     def post(self, request, format=None):
         username = request.data.get('username')
         password = request.data.get('password')
+
+        try:
+            user_obj = User.objects.get(username=username)
+            if not user_obj.is_active:
+                return Response({
+                    'error': 'Please verify your email before logging in. Check your inbox for the verification link.'
+                }, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            pass
+
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
@@ -50,15 +63,39 @@ class RegistrationView(APIView):
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            _, token = AuthToken.objects.create(user)
+            user.is_active = False
+            user.save()
+
+            ver, _ = EmailVerification.objects.get_or_create(user=user)
+            ver.token = get_random_string(64)
+            ver.save()
+
+            verify_link = f"{settings.FRONTEND_URL}/verify-email?token={ver.token}&user_id={user.id}"
+            try:
+                send_mail(
+                    subject="Verify your email – Lung Cancer Detection",
+                    message=(
+                        f"Hi {user.username},\n\n"
+                        f"Thank you for registering! Please verify your email by clicking the link below:\n\n"
+                        f"{verify_link}\n\n"
+                        f"This link expires after 24 hours.\n\n"
+                        f"Best regards,\nLung Cancer Detection Team"
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[user.email],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                pass
+
             return Response({
-                    'user_info':{
-                    'id':user.id,
-                    'username':user.username,
-                    'email':user.email
-                    },
-                'token':token
-                })
+                'msg': 'Registration successful. Please check your email to verify your account.',
+                'user_info': {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email
+                }
+            })
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -269,3 +306,66 @@ def admin_delete_user(request, id):
         return Response({'msg': 'User deleted successfully'})
     except User.DoesNotExist:
         return Response({'error': 'User not found'}, status=404)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def verify_email(request):
+    token = request.data.get('token')
+    user_id = request.data.get('user_id')
+
+    if not token or not user_id:
+        return Response({'error': 'Token and user_id are required.'}, status=400)
+
+    try:
+        ver = EmailVerification.objects.get(user_id=user_id, token=token)
+    except EmailVerification.DoesNotExist:
+        return Response({'error': 'Invalid or expired verification link.'}, status=400)
+
+    user = ver.user
+    user.is_active = True
+    user.save()
+    ver.delete()
+
+    return Response({'msg': 'Email verified successfully. You can now log in.'})
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def resend_verification(request):
+    username = request.data.get('username')
+    email = request.data.get('email')
+
+    if not username or not email:
+        return Response({'error': 'Username and email are required.'}, status=400)
+
+    try:
+        user = User.objects.get(username=username, email=email)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found.'}, status=404)
+
+    if user.is_active:
+        return Response({'error': 'Account is already verified.'}, status=400)
+
+    ver, _ = EmailVerification.objects.get_or_create(user=user)
+    ver.token = get_random_string(64)
+    ver.save()
+
+    verify_link = f"{settings.FRONTEND_URL}/verify-email?token={ver.token}&user_id={user.id}"
+    try:
+        send_mail(
+            subject="Verify your email – Lung Cancer Detection",
+            message=(
+                f"Hi {user.username},\n\n"
+                f"Here is your new verification link:\n\n"
+                f"{verify_link}\n\n"
+                f"Best regards,\nLung Cancer Detection Team"
+            ),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+    except Exception:
+        return Response({'error': 'Failed to send email. Check SMTP settings.'}, status=500)
+
+    return Response({'msg': 'Verification email resent. Please check your inbox.'})

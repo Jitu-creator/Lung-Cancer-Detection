@@ -10,9 +10,9 @@ urlpatterns = [
 
     path('user/',views.getUserDetails),
     path('register/',views.RegistrationView.as_view()),
-    path('logout/',views.LogoutAPI.as_view()), # delete token associate to one user
-    path('patient/', views.PatientView.as_view(),name='patient'), # post the patient's data
-    path('list/', views.list_patients,name='list-patient'), # get the patient's data
+    path('logout/',views.LogoutAPI.as_view()),
+    path('patient/', views.PatientView.as_view(),name='patient'),
+    path('list/', views.list_patients,name='list-patient'),
     path('search_patient/', views.get_patient_details, name="patientdetails"),
     path('edit_patient/', views.edit_patient_details, name="editpatientdetails"),
 
@@ -23,4 +23,7 @@ urlpatterns = [
     path('admin/users/', views.admin_list_users),
     path('admin/users/<int:id>/', views.admin_update_user),
     path('admin/users/<int:id>/delete/', views.admin_delete_user),
+
+    path('verify-email/', views.verify_email),
+    path('resend-verification/', views.resend_verification),
 ] 
