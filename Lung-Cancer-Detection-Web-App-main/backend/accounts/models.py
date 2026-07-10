@@ -10,10 +10,8 @@ import logging
 from io import BytesIO
 from threading import Lock
 
-import cv2
 import numpy as np
 import tensorflow as tf
-from PIL import Image
 
 logger = logging.getLogger(__name__)
 
@@ -110,6 +108,8 @@ class Patientdb(models.Model):
 
     def classify_image(self):
 
+        from PIL import Image
+
         model = self.get_lung_model()
 
         # Open image safely
@@ -161,6 +161,9 @@ class Patientdb(models.Model):
 
     def generate_gradcam(self, class_idx):
 
+        import cv2
+        from PIL import Image
+
         model = self.get_lung_model()
 
         last_conv_layer_name = (
@@ -168,7 +171,7 @@ class Patientdb(models.Model):
         )
 
         logger.info(
-            "Using GradCAM layer: %s",
+            "GradCAM layer: %s",
             last_conv_layer_name
         )
 

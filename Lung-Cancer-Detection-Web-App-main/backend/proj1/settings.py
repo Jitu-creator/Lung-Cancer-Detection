@@ -25,6 +25,10 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-&t_f0@e(hs6cxx
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '*').split(',')
+HF_SPACE = os.environ.get('HF_SPACE', '')
+if HF_SPACE:
+    ALLOWED_HOSTS += [HF_SPACE, f'{HF_SPACE}.hf.space']
+    CSRF_TRUSTED_ORIGINS = [f'https://{HF_SPACE}.hf.space']
 
 
 
@@ -163,7 +167,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3003",
     "http://localhost:3004",
     "http://127.0.0.1:8000",
+    "https://lung-cancer-detection-blond.vercel.app",
 ]
+
+if HF_SPACE:
+    CORS_ALLOWED_ORIGINS += [f'https://{HF_SPACE}.hf.space']
 
 CORS_ALLOWED_ORIGIN_REGEXES = os.environ.get(
     'CORS_ALLOWED_ORIGIN_REGEXES',
