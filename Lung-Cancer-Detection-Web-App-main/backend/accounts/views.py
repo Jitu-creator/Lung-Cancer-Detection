@@ -428,7 +428,26 @@ def debug_smtp(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def test_smtp(request):
-    import traceback
+    import traceback, socket
+    socket.setdefaulttimeout(10)
+    try:
+        from django.core.mail import get_connection
+        conn = get_connection(host=settings.EMAIL_HOST, port=settings.EMAIL_PORT, username=settings.EMAIL_HOST_USER, password=settings.EMAIL_HOST_PASSWORD, use_tls=settings.EMAIL_USE_TLS, timeout=10)
+        conn.open()
+        conn.close()
+        return Response({'msg': 'SMTP connection successful!'})
+    except Exception as e:
+        return Response({
+            'error': str(e),
+            'traceback': traceback.format_exc()
+        }, status=500)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def test_send_email(request):
+    import traceback, socket
+    socket.setdefaulttimeout(15)
     try:
         send_mail(
             subject="Test email – Lung Cancer Detection",
