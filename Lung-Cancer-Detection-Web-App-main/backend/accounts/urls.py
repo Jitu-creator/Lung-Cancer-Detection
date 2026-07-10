@@ -27,4 +27,5 @@ urlpatterns = [
     path('verify-email/', views.verify_email),
     path('resend-verification/', views.resend_verification),
     path('bootstrap-admin/', views.bootstrap_admin),
+    path('debug-smtp/', views.debug_smtp),
 ] 

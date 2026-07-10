@@ -9,8 +9,11 @@ from .serializers import LoginSerializer
 from django.contrib.auth import authenticate
 from .serializers import RegistrationSerializer
 import os
+import logging
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
+
+logger = logging.getLogger(__name__)
 from django.contrib.auth import authenticate, login
 from knox.views import LoginView as KnoxLoginView
 from rest_framework import permissions
@@ -393,7 +396,25 @@ def resend_verification(request):
             recipient_list=[user.email],
             fail_silently=False,
         )
-    except Exception:
-        return Response({'error': 'Failed to send email. Check SMTP settings.'}, status=500)
+    except Exception as e:
+        logger.exception("Email sending failed")
+        return Response({
+            'error': f'Failed to send email: {e}',
+            'hint': 'Check SMTP settings on Railway (EMAIL_HOST, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD). Gmail requires an App Password, not your regular password.'
+        }, status=500)
 
     return Response({'msg': 'Verification email resent. Please check your inbox.'})
+
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def debug_smtp(request):
+    return Response({
+        'EMAIL_HOST': settings.EMAIL_HOST,
+        'EMAIL_PORT': settings.EMAIL_PORT,
+        'EMAIL_USE_TLS': settings.EMAIL_USE_TLS,
+        'EMAIL_HOST_USER': settings.EMAIL_HOST_USER,
+        'DEFAULT_FROM_EMAIL': settings.DEFAULT_FROM_EMAIL,
+        'EMAIL_HOST_PASSWORD_SET': bool(settings.EMAIL_HOST_PASSWORD),
+    })
