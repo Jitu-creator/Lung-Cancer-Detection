@@ -17,7 +17,7 @@ const AdminDashboard = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("${API_BASE_URL}/api/admin/users/");
+      const res = await axios.get(`${API_BASE_URL}/api/admin/users/`);
       setUsers(res.data.users);
     } catch {
       toast.error("Failed to fetch users");
