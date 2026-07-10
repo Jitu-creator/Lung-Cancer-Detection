@@ -144,18 +144,17 @@ const Patientdata = () => {
   return (
     //<>
 
-    <div className="min-h-screen bg-slate-100 p-6">
+    <div className="min-h-screen bg-slate-100 p-4 md:p-6">
 
+<div className="mb-8">
 
-<div className="mb-10">
-
-  <h1 className="text-5xl font-bold text-slate-800 mb-3">
+  <h1 className="text-2xl md:text-3xl font-bold text-slate-800 mb-2">
 
     AI Diagnostic Dashboard
 
   </h1>
 
-  <p className="text-slate-500 text-lg">
+  <p className="text-slate-500 text-sm md:text-base">
 
     Real-time lung cancer detection analytics
     and patient monitoring system.
@@ -166,18 +165,18 @@ const Patientdata = () => {
 
 
 
-<div className="grid md:grid-cols-5 gap-6 mb-12">
+<div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-5 mb-8">
 
-
+  
 
   {/* Total */}
 
- 
+  
 
   <motion.div
 
   whileHover={{
-    y: -10,
+    y: -5,
     scale: 1.02
   }}
 
@@ -186,25 +185,25 @@ const Patientdata = () => {
     stiffness: 200
   }}
 
-  className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-500 to-blue-600 p-8 shadow-2xl"
+  className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-cyan-500 to-blue-600 p-4 md:p-5 shadow-xl"
 
 >
 
   {/* GLOW EFFECT */}
 
-  <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+  <div className="absolute -top-8 -right-8 w-28 h-28 bg-white/10 rounded-full blur-3xl"></div>
 
   {/* CONTENT */}
 
   <div className="relative z-10">
 
-    <p className="text-cyan-100 text-lg font-medium mb-3">
+    <p className="text-cyan-100 text-xs md:text-base font-medium mb-1 md:mb-2">
 
       Total Patients
 
     </p>
 
-    <h1 className="text-6xl font-bold text-white mb-4">
+    <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
 
       <CountUp
         end={stats.total}
@@ -244,7 +243,7 @@ const Patientdata = () => {
     stiffness: 200
   }}
 
-  className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-red-500 to-rose-600 p-8 shadow-2xl"
+  className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-red-500 to-rose-600 p-4 md:p-5 shadow-xl"
 
 >
 
@@ -262,7 +261,7 @@ const Patientdata = () => {
 
     </p>
 
-    <h1 className="text-6xl font-bold text-white mb-4">
+    <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
 
       <CountUp
         end={stats.malignant}
@@ -302,7 +301,7 @@ const Patientdata = () => {
     stiffness: 200
   }}
 
-  className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-400 to-orange-500 p-8 shadow-2xl"
+  className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-amber-400 to-orange-500 p-4 md:p-5 shadow-xl"
 
 >
 
@@ -320,7 +319,7 @@ const Patientdata = () => {
 
     </p>
 
-    <h1 className="text-6xl font-bold text-white mb-4">
+    <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
 
       <CountUp
         end={stats.benign}
@@ -374,7 +373,7 @@ const Patientdata = () => {
     stiffness: 200
   }}
 
-  className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500 to-green-600 p-8 shadow-2xl"
+  className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-emerald-500 to-green-600 p-4 md:p-5 shadow-xl"
 
 >
 
@@ -392,7 +391,7 @@ const Patientdata = () => {
 
     </p>
 
-    <h1 className="text-6xl font-bold text-white mb-4">
+    <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
 
       {/* {stats.normal} */}
       <CountUp
@@ -434,7 +433,7 @@ const Patientdata = () => {
     stiffness: 200
   }}
 
-  className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 via-indigo-600 to-cyan-500 p-8 shadow-2xl"
+  className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-violet-600 via-indigo-600 to-cyan-500 p-4 md:p-5 shadow-xl"
 
 >
 
@@ -452,7 +451,7 @@ const Patientdata = () => {
 
     </p>
 
-    <h1 className="text-6xl font-bold text-white mb-4">
+    <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
 
       <CountUp
         end={stats.averageConfidence}
@@ -533,7 +532,7 @@ const Patientdata = () => {
           data={chartData}
           cx="50%"
           cy="50%"
-          outerRadius={200}
+          outerRadius={120}
           dataKey="value"
           label
         >
