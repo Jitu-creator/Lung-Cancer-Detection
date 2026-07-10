@@ -11,4 +11,3 @@ tensorflow==2.21.0
 matplotlib==3.7.1
 pandas==2.0.0
 scipy==1.10.1
-mysqlclient==2.1.1
