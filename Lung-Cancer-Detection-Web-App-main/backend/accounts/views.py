@@ -97,14 +97,19 @@ class RegistrationView(APIView):
 
             threading.Thread(target=send_async, daemon=True).start()
 
-            return Response({
+            resp = {
                 'msg': 'Registration successful. Please check your email to verify your account.',
                 'user_info': {
                     'id': user.id,
                     'username': user.username,
                     'email': user.email
-                }
-            })
+                },
+            }
+
+            if os.environ.get('SHOW_VERIFY_LINK', 'False') == 'True':
+                resp['verify_link'] = verify_link
+
+            return Response(resp)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
